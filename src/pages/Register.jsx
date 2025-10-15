@@ -4,9 +4,9 @@ import PublicLayout from "../components/PublicLayout";
 import { api } from "../api/http";
 
 export default function Register() {
-  const [name, setName] = useState("Admin");
-  const [email, setEmail] = useState("admin@a.com");
-  const [password, setPassword] = useState("123");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export default function Register() {
     setMsg(""); setLoading(true);
     try {
       await api.register({ name, email, password });
-      setMsg("Usuário registrado! Agora faça login.");
+      setMsg("Usuário registrado com sucesso9! redirecionando para tela de login.");
       setTimeout(() => navigate("/login"), 800);
     } catch (e) {
       setMsg(e.message || "Erro no registro");
