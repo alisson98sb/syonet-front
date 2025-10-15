@@ -1,30 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import Layout from "../components/Layout";
 import { api } from "../api/http";
 
 export default function History() {
-  const [itemId, setItemId] = useState("");
+  const [search] = useSearchParams();
+  const initialId = search.get("itemId") || "";
+  const [itemId, setItemId] = useState(initialId);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleSearch(e) {
-    e.preventDefault();
-    if (!itemId.trim()) {
-      setError("Informe o ID do item.");
-      return;
-    }
+  async function fetchHistory(id) {
     setError("");
     setLoading(true);
     try {
-      const data = await api.history(itemId);
+      const data = await api.history(id);
       setRows(data);
-    } catch (err) {
+    } catch (e) {
       setError("Erro ao consultar histórico.");
-      console.error(err);
     } finally {
       setLoading(false);
     }
+  }
+
+  useEffect(() => {
+    if (initialId) fetchHistory(initialId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialId]);
+
+  function onSubmit(e) {
+    e.preventDefault();
+    if (!itemId.trim()) return setError("Informe o ID do item.");
+    fetchHistory(itemId.trim());
   }
 
   return (
@@ -32,7 +40,7 @@ export default function History() {
       <div className="card">
         <h2 className="mb-2">Histórico de Movimentações</h2>
 
-        <form onSubmit={handleSearch} className="mb-2">
+        <form onSubmit={onSubmit} className="mb-2">
           <label htmlFor="itemId" className="mb-1">ID do item:</label>
           <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
             <input
@@ -58,20 +66,14 @@ export default function History() {
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Tipo</th>
-                  <th>Qtd</th>
-                  <th>Saldo após</th>
-                  <th>Usuário</th>
-                  <th>Data</th>
-                  <th>Nota</th>
+                  <th>ID</th><th>Tipo</th><th>Qtd</th><th>Saldo após</th>
+                  <th>Usuário</th><th>Data</th><th>Nota</th>
                 </tr>
               </thead>
               <tbody>
-                {console.log(rows)}
                 {rows.map(r => (
                   <tr key={r.id}>
-                    <td>{r.itemId}</td>
+                    <td>{r.id}</td>
                     <td>{r.type}</td>
                     <td>{r.amount}</td>
                     <td>{r.balanceAfter}</td>
