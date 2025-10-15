@@ -1,4 +1,4 @@
-const API = process.env.REACT_APP_API || "http://localhost:8081";
+const API = process.env.REACT_APP_API || "/api";
 
 export async function fetchJson(path, { method = "GET", body, headers = {} } = {}) {
   const res = await fetch(`${API}${path}`, {
