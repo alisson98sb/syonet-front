@@ -33,31 +33,3 @@ Ou utilize Docker Compose:
 docker compose up -d --build
 Acesse:
 http://localhost:3000
----
-##  Nginx
-Configuração principal:
-server {
-listen 80;
-root /usr/share/nginx/html;
-index index.html;
-location / {
-try_files $uri $uri/ /index.html;
-}
-location /api/ {
-proxy_pass http://api:8081/;
-}
-}
----
-##  Dockerfile
-FROM node:20-alpine AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --no-audit --fund=false
-ENV REACT_APP_API=/api
-COPY . .
-RUN npm run build
-FROM nginx:alpine
-WORKDIR /usr/share/nginx/html
-COPY --from=build /app/build ./
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
