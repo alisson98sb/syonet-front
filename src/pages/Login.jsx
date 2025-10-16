@@ -4,8 +4,8 @@ import { api } from "../api/http";
 import PublicLayout from "../components/PublicLayout";
 
 export default function Login() {
-  const [email, setEmail] = useState("admin@a.com");
-  const [password, setPassword] = useState("123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const navigate = useNavigate();
